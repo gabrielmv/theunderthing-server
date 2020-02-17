@@ -1,0 +1,77 @@
+version: "2"
+services:
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - VERSION=docker
+      - UMASK_SET=022 #optional
+      - PLEX_CLAIM= #optional
+    volumes:
+      - /path/to/library:/config
+      - path/to/tvseries:/tv
+      - /path/to/movies:/movies
+    restart: unless-stopped
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022 #optional
+    volumes:
+      - path to data:/config
+      - path/to/tvseries:/tv
+      - path/to/downloadclient-downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022 #optional
+    volumes:
+      - path to data:/config
+      - path/to/movies:/movies
+      - path/to/downloadclient-downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=America/Sao_Paulo
+      - RUN_OPTS=run options here #optional
+    volumes:
+      - path to data:/config
+      - path to blackhole:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+  deluge:
+    image: linuxserver/deluge
+    container_name: deluge
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022 #optional
+      - DELUGE_LOGLEVEL=error #optional
+    volumes:
+      - /path/to/deluge/config:/config
+      - /path/to/your/downloads:/downloads
+    restart: unless-stopped
+    

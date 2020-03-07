@@ -9,11 +9,10 @@ services:
       - PGID=${PGID}
       - VERSION=docker
       - UMASK_SET=022 #optional
-      - PLEX_CLAIM= #optional
     volumes:
-      - /path/to/library:/config
-      - path/to/tvseries:/tv
-      - /path/to/movies:/movies
+      - ~/config:/config
+      - /yosemite/tvseries:/tv
+      - /yosemite/movies:/movies
     restart: unless-stopped
   sonarr:
     image: linuxserver/sonarr
@@ -24,9 +23,9 @@ services:
       - TZ=America/Sao_Paulo
       - UMASK_SET=022 #optional
     volumes:
-      - path to data:/config
-      - path/to/tvseries:/tv
-      - path/to/downloadclient-downloads:/downloads
+      - ~/config/config
+      - /yosemite/tvseries:/tv
+      - /yosemite/downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -40,9 +39,9 @@ services:
       - TZ=America/Sao_Paulo
       - UMASK_SET=022 #optional
     volumes:
-      - path to data:/config
-      - path/to/movies:/movies
-      - path/to/downloadclient-downloads:/downloads
+      - ~/config:/config
+      - /yosemite/movies:/movies
+      - /yosemite/downloads:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -55,8 +54,8 @@ services:
       - TZ=America/Sao_Paulo
       - RUN_OPTS=run options here #optional
     volumes:
-      - path to data:/config
-      - path to blackhole:/downloads
+      - ~/config:/config
+      - /yosemite:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -71,7 +70,7 @@ services:
       - UMASK_SET=022 #optional
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - /path/to/deluge/config:/config
-      - /path/to/your/downloads:/downloads
+      - ~/config:/config
+      - /yosemite/downloads:/downloads
     restart: unless-stopped
     

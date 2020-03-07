@@ -52,7 +52,6 @@ services:
       - PUID=${PUID}
       - PGID=${PUID}
       - TZ=America/Sao_Paulo
-      - RUN_OPTS=run options here #optional
     volumes:
       - ~/config:/config
       - /yosemite:/downloads
@@ -72,5 +71,21 @@ services:
     volumes:
       - ~/config:/config
       - /yosemite/downloads:/downloads
+    restart: unless-stopped
+
+  calibre:
+    image: linuxserver/calibre
+    container_name: calibre
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=Europe/London
+      - GUAC_USER=abc #optional
+      - GUAC_PASS=900150983cd24fb0d6963f7d28e17f72 #optional
+    volumes:
+      - /path/to/data:/config
+    ports:
+      - 9090:8080
+      - 9091:8081
     restart: unless-stopped
     

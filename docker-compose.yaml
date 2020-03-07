@@ -10,7 +10,7 @@ services:
       - VERSION=docker
       - UMASK_SET=022 #optional
     volumes:
-      - ~/config:/config
+      - ~/config/plex:/config
       - /yosemite/tvseries:/tv
       - /yosemite/movies:/movies
     restart: unless-stopped
@@ -19,11 +19,11 @@ services:
     container_name: sonarr
     environment:
       - PUID=${PUID}
-      - PGID=${PUID}
+      - PGID=${PGID}
       - TZ=America/Sao_Paulo
       - UMASK_SET=022 #optional
     volumes:
-      - ~/config/config
+      - ~/config/sonarr/config
       - /yosemite/tvseries:/tv
       - /yosemite/downloads:/downloads
     ports:
@@ -39,7 +39,7 @@ services:
       - TZ=America/Sao_Paulo
       - UMASK_SET=022 #optional
     volumes:
-      - ~/config:/config
+      - ~/config/radarr:/config
       - /yosemite/movies:/movies
       - /yosemite/downloads:/downloads
     ports:
@@ -50,10 +50,10 @@ services:
     container_name: jackett
     environment:
       - PUID=${PUID}
-      - PGID=${PUID}
+      - PGID=${PGID}
       - TZ=America/Sao_Paulo
     volumes:
-      - ~/config:/config
+      - ~/config/jackett:/config
       - /yosemite:/downloads
     ports:
       - 9117:9117
@@ -64,12 +64,12 @@ services:
     network_mode: host
     environment:
       - PUID=${PUID}
-      - PGID=${PUID}
+      - PGID=${PGID}
       - TZ=America/Sao_Paulo
       - UMASK_SET=022 #optional
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - ~/config:/config
+      - ~/config/deluge:/config
       - /yosemite/downloads:/downloads
     restart: unless-stopped
 
@@ -78,12 +78,30 @@ services:
     container_name: calibre
     environment:
       - PUID=${PUID}
-      - PGID=${PUID}
+      - PGID=${PGID}
       - TZ=America/Sao_Paulo
     volumes:
-      - ~/config:/config
+      - ~/config/calibre:/config
     ports:
       - 9090:8080
       - 9091:8081
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022
+      - WEBUI_PORT=7070
+    volumes:
+      - ~/config/qbittorrent:/config
+      - /yosemite/downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 7070:8080
     restart: unless-stopped
     

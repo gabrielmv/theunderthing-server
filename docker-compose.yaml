@@ -81,7 +81,7 @@ services:
       - PGID=${PGID}
       - TZ=America/Sao_Paulo
     volumes:
-      - ~/config/calibre:/config
+      - /yosemite/calibre:/config
     ports:
       - 9090:8080
       - 9091:8081

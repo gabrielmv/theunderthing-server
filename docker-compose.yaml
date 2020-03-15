@@ -87,21 +87,36 @@ services:
       - 9091:8081
     restart: unless-stopped
 
-  qbittorrent:
-    image: linuxserver/qbittorrent
-    container_name: qbittorrent
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Sao_Paulo
-      - UMASK_SET=022
-      - WEBUI_PORT=7070
+      - UMASK_SET=022 #optional
     volumes:
-      - ~/config/qbittorrent:/config
+      ~/config/deluge:/config
       - /yosemite/downloads:/downloads
+      - ~/config/bazarr:/config
+      - /yosemite/movies:/movies
+      - /yosemite/tvseries:/tv
     ports:
-      - 6881:6881
-      - 6881:6881/udp
-      - 7070:8080
+      - 6767:6767
+    restart: unless-stopped
+
+  calibre-web:
+    image: linuxserver/calibre-web
+    container_name: calibre-web
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ~/config/calibre-wen:/config
+      - /yosemite/calibre:/books
+    ports:
+      - 8083:8083
     restart: unless-stopped
     

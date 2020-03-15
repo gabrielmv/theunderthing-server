@@ -1,5 +1,14 @@
 version: "2"
 services:
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/config/portainer:/data portainer/portainer
+    ports:
+      - 8000:8000
+      - 9000:9000
+    restart: always
   plex:
     image: linuxserver/plex
     container_name: plex
@@ -119,4 +128,3 @@ services:
     ports:
       - 8083:8083
     restart: unless-stopped
-    

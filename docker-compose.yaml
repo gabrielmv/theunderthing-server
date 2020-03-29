@@ -1,5 +1,27 @@
 version: "2"
 services:
+  nginx:
+    image: linuxserver/nginx
+    container_name: nginx
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ~/config/nginx:/config
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/config/portainer:/data portainer/portainer
+    ports:
+      - 8000:8000
+      - 9000:9000
+    restart: always
   plex:
     image: linuxserver/plex
     container_name: plex
@@ -100,3 +122,35 @@ services:
   #     - 80:80 #optional
   #   restart: unless-stopped
 
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022 #optional
+    volumes:
+      ~/config/deluge:/config
+      - /yosemite/downloads:/downloads
+      - ~/config/bazarr:/config
+      - /yosemite/movies:/movies
+      - /yosemite/tvseries:/tv
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
+  calibre-web:
+    image: linuxserver/calibre-web
+    container_name: calibre-web
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Sao_Paulo
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ~/config/calibre-wen:/config
+      - /yosemite/calibre:/books
+    ports:
+      - 8083:8083
+    restart: unless-stopped

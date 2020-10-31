@@ -3,10 +3,9 @@ services:
   nginx:
     image: linuxserver/nginx
     container_name: nginx
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/nginx:/config
     ports:
@@ -18,29 +17,25 @@ services:
     image: linuxserver/plex
     container_name: plex
     network_mode: host
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - VERSION=docker
-      - UMASK_SET=022 #optional
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/plex:/config
-      - /yosemite/tvseries:/tv
-      - /yosemite/movies:/movies
+      - /storage/tvseries:/tv
+      - /storage/movies:/movies
     restart: unless-stopped
 
   sonarr:
     image: linuxserver/sonarr
     container_name: sonarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
-      - UMASK_SET=022 #optional
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/sonarr/config
-      - /yosemite/tvseries:/tv
-      - /yosemite/downloads:/downloads
+      - /storage/tvseries:/tv
+      - /storage/downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -48,28 +43,25 @@ services:
   radarr:
     image: linuxserver/radarr
     container_name: radarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
-      - UMASK_SET=022 #optional
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/radarr:/config
-      - /yosemite/movies:/movies
-      - /yosemite/downloads:/downloads
+      - /storage/movies:/movies
+      - /storage/downloads:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
   jackett:
     image: linuxserver/jackett
     container_name: jackett
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/jackett:/config
-      - /yosemite:/downloads
+      - /storage:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -77,17 +69,15 @@ services:
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
-      - UMASK_SET=022 #optional
+    extends:
+      file: base.yml
+      service: base
     volumes:
       ~/config/deluge:/config
-      - /yosemite/downloads:/downloads
+      - /storage/downloads:/downloads
       - ~/config/bazarr:/config
-      - /yosemite/movies:/movies
-      - /yosemite/tvseries:/tv
+      - /storage/movies:/movies
+      - /storage/tvseries:/tv
     ports:
       - 6767:6767
     restart: unless-stopped
@@ -95,14 +85,14 @@ services:
   calibre-web:
     image: linuxserver/calibre-web
     container_name: calibre-web
+    extends:
+      file: base.yml
+      service: base
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
       - DOCKER_MODS=linuxserver/calibre-web:calibre
     volumes:
-      - ~/config/calibre-wen:/config
-      - /yosemite/calibre:/books
+      - ~/config/calibre-web:/config
+      - /storage/calibre:/books
     ports:
       - 8083:8083
     restart: unless-stopped
@@ -110,10 +100,9 @@ services:
   tautulli:
     image: linuxserver/tautulli
     container_name: tautulli
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
+    extends:
+      file: base.yml
+      service: base
     volumes:
       - ~/config/tautulli:/config
       - ~/config/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs

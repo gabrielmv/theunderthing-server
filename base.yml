@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  base:
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/Sao_Paulo
+      - UMASK_SET=022 #optional

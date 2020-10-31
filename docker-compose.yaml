@@ -13,15 +13,6 @@ services:
       - 80:80
       - 443:443
     restart: unless-stopped
-  portainer:
-    image: portainer/portainer
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ~/config/portainer:/data portainer/portainer
-    ports:
-      - 8000:8000
-      - 9000:9000
-    restart: always
   plex:
     image: linuxserver/plex
     container_name: plex
@@ -80,20 +71,7 @@ services:
     ports:
       - 9117:9117
     restart: unless-stopped
-  deluge:
-    image: linuxserver/deluge
-    container_name: deluge
-    network_mode: host
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
-      - UMASK_SET=022 #optional
-      - DELUGE_LOGLEVEL=error #optional
-    volumes:
-      - ~/config/deluge:/config
-      - /yosemite/downloads:/downloads
-    restart: unless-stopped
+
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr

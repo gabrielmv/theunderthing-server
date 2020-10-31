@@ -137,4 +137,38 @@ services:
       - 6881:6881/udp
       - 5000:5000
     restart: unless-stopped
-    
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    extends:
+      file: base.yml
+      service: base
+    volumes:
+      - ~/config/prometheus/:/etc/prometheus/
+      - ~/data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    extends:
+      file: base.yml
+      service: base
+    depends_on:
+      - prometheus
+    ports:
+      - 3001:3000
+    volumes:
+      - ~/data/prometheus:/var/lib/grafana
+      - ~/config/prometheus:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.monitoring
+    user: "104"

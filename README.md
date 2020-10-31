@@ -1,12 +1,18 @@
-# plex-server
+# The Underthing Server
 
-Automatic setup for a Plex Media Server with the following containers
+Automatic setup for a Media Server with the following services
 
 - Plex
 - Radarr
 - Sonarr
+- Bazarr
 - Jackett
-- Deluge
+- qBittorrent
+- Nginx
+- Calibre Web
+- Tautulli
+- Primetheus
+- Grafana
 
 Also sets up a Dynamic DNS using duckdns.org. 
 

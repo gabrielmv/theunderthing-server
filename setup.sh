@@ -29,11 +29,6 @@ PGID=`(id -g $USER)`
 
 docker-compose up
 
-
-# zfs
-sudo apt install zfsutils-linux -y
-sudo zpool create yosemite /dev/sdb
-
 #docker
 
 sudo chown -R gabriel:gabriel /yosemite

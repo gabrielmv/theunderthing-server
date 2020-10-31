@@ -72,20 +72,6 @@ services:
       - 9117:9117
     restart: unless-stopped
 
-  calibre:
-    image: linuxserver/calibre
-    container_name: calibre
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Sao_Paulo
-    volumes:
-      - /yosemite/calibre:/config
-    ports:
-      - 9090:8080
-      - 9091:8081
-    restart: unless-stopped
-
   bazarr:
     image: linuxserver/bazarr
     container_name: bazarr

@@ -121,20 +121,20 @@ services:
       - 8181:8181
     restart: unless-stopped
 
-    qbittorrent:
-      image: linuxserver/qbittorrent
-      container_name: qbittorrent
-      extends:
-        file: base.yml
-        service: base
-      environment:
-        - WEBUI_PORT=5000
-      volumes:
-        - ~/config/qbittorrent:/config
-        - /storage/downloads:/downloads
-      ports:
-        - 6881:6881
-        - 6881:6881/udp
-        - 5000:5000
-      restart: unless-stopped
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    extends:
+      file: base.yml
+      service: base
+    environment:
+      - WEBUI_PORT=5000
+    volumes:
+      - ~/config/qbittorrent:/config
+      - /storage/downloads:/downloads
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 5000:5000
+    restart: unless-stopped
     

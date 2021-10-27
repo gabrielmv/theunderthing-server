@@ -1,0 +1,24 @@
+---
+- name: Create duckdns folder on server.
+  ansible.builtin.file:
+    path: ~/duckdns
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy duckdns script template to Pi.
+  ansible.builtin.template:
+    src: templates/duckdns.sh.j2
+    dest: ~/duckdns/duckdns.sh
+    mode: '0700'
+  become: false
+  
+- name: Create duckdns cron.
+  ansible.builtin.cron:
+    minute: /5 
+    job: ~/duckdns/duckdns.sh >/dev/null 2>&1
+    state: present
+
+- name: run duckdns script
+  ansible.builtin.script:
+    ~/duckdns/duckdns.sh

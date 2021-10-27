@@ -1,0 +1,22 @@
+---
+- name: Create nginx folder on Pi.
+  ansible.builtin.file:
+    path: ~/nginx
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Synchronize nginx directory.
+  ansible.posix.synchronize:
+    src: nginx
+    dest: "{{ config_dir }}/"
+    delete: false
+    recursive: true
+    perms: false
+  become: false
+
+- name: Ensure nginx is running.
+  community.docker.docker_compose:
+    project_src: ~/nginx/
+    build: false
+  become: false

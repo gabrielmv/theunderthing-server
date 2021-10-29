@@ -1,40 +1,30 @@
-version: "2"
+version: "2.3"
 services:
-  nginx:
-    image: linuxserver/nginx
-    container_name: nginx
-    extends:
-      file: base.yml
-      service: base
-    volumes:
-      - ~/config/nginx:/config
-    ports:
-      - 80:80
-      - 443:443
-    restart: unless-stopped
-
   plex:
     image: linuxserver/plex
     container_name: plex
     network_mode: host
+    runtime: nvidia
     extends:
       file: base.yml
       service: base
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - ~/config/plex:/config
-      - /storage/tvseries:/tv
+      - /storage/tv:/tv
       - /storage/movies:/movies
     restart: unless-stopped
 
-  sonarr:
-    image: linuxserver/sonarr
-    container_name: sonarr
+  sonarr-beta:
+    image: hotio/sonarr
+    container_name: sonarr-beta
     extends:
       file: base.yml
       service: base
     volumes:
-      - ~/config/sonarr/config
-      - /storage/tvseries:/tv
+      - ~/config/sonarr-beta:/config
+      - /storage/tv:/tv
       - /storage/downloads:/downloads
     ports:
       - 8989:8989
@@ -53,6 +43,7 @@ services:
     ports:
       - 7878:7878
     restart: unless-stopped
+
   jackett:
     image: linuxserver/jackett
     container_name: jackett
@@ -73,11 +64,9 @@ services:
       file: base.yml
       service: base
     volumes:
-      ~/config/deluge:/config
-      - /storage/downloads:/downloads
       - ~/config/bazarr:/config
       - /storage/movies:/movies
-      - /storage/tvseries:/tv
+      - /storage/tv:/tv
     ports:
       - 6767:6767
     restart: unless-stopped
@@ -110,54 +99,168 @@ services:
       - 8181:8181
     restart: unless-stopped
 
-  qbittorrent:
+  surfshark-0:
+    image: ilteoood/docker-surfshark
+    container_name: surfshark-0
+    environment: 
+      - SURFSHARK_USER=XneepRHn7tpFmTNNBg2cscWY
+      - SURFSHARK_PASSWORD=WxvxeEZgjKNE7ytsHJVW3S7v
+      - SURFSHARK_COUNTRY=se
+      - SURFSHARK_CITY=sto
+      - CONNECTION_TYPE=udp
+      - LAN_NETWORK=10.0.0.0/24
+    cap_add: 
+      - NET_ADMIN
+    devices:
+       - /dev/net/tun
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+# :14.2.4.99202004222217-7004-50f676cubuntu18.04.1-ls75
+  qbittorrent-0:
     image: linuxserver/qbittorrent
-    container_name: qbittorrent
+    container_name: qbittorrent-0
+    depends_on: 
+      - surfshark-0
     extends:
       file: base.yml
       service: base
     environment:
       - WEBUI_PORT=5000
     volumes:
-      - ~/config/qbittorrent:/config
+      - ~/config/qbittorrent-0:/config
       - /storage/downloads:/downloads
-    ports:
-      - 6881:6881
-      - 6881:6881/udp
-      - 5000:5000
+    # ports:
+      # - 6881:6881
+      # - 6881:6881/udp
+      # - 5000:5000
+    network_mode: service:surfshark-0
     restart: unless-stopped
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
+  surfshark-1:
+    image: ilteoood/docker-surfshark
+    container_name: surfshark-1
+    environment: 
+      - SURFSHARK_USER=XneepRHn7tpFmTNNBg2cscWY
+      - SURFSHARK_PASSWORD=WxvxeEZgjKNE7ytsHJVW3S7v
+      - SURFSHARK_COUNTRY=nl
+      - SURFSHARK_CITY=ams
+      - CONNECTION_TYPE=udp
+      - LAN_NETWORK=10.0.0.0/24
+    cap_add: 
+      - NET_ADMIN
+    devices:
+       - /dev/net/tun
+    ports:
+      - 5001:5001
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+
+  qbittorrent-1:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent-1
+    depends_on: 
+      - surfshark-1
     extends:
       file: base.yml
       service: base
+    environment:
+      - WEBUI_PORT=5001
     volumes:
-      - ~/config/prometheus/:/etc/prometheus/
-      - ~/data/prometheus:/prometheus
+      - ~/config/qbittorrent-1:/config
+      - /storage/downloads:/downloads
+    # ports:
+      # - 6881:6881
+      # - 6881:6881/udp
+      # - 5001:5000
+    network_mode: service:surfshark-1
+    restart: unless-stopped
+
+  # axigen:
+  #   container_name: axigen
+  #   image: axigen/axigen
+  #   ports:
+  #     # - "21:21"
+  #     # - "25:25"
+  #     # - "80:80"
+  #     # - "110:110"
+  #     # - "143:143"
+  #     - "443:443"
+  #     - "465:465"
+  #     - "993:993"
+  #     - "995:995"        
+  #     # - "9000:9000"
+  #     - "9443:9443"
+  #     # - "7000:7000"
+  #   volumes:
+  #     - './config/axigen/:/var/opt/axigen/'
+  #   restart: unless-stopped
+
+  node-exporter:
+    privileged: true
+    container_name: node-exporter
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - 9100:9100
+    restart: always
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+  
+  dcgm-exporter:
+    container_name: dcgm-exporter
+    runtime: nvidia
+    image: nvcr.io/nvidia/k8s/dcgm-exporter
     ports:
-      - 9090:9090
-    restart: unless-stopped
+      - 9400:9400
+    restart: always
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    extends:
-      file: base.yml
-      service: base
-    depends_on:
-      - prometheus
-    ports:
-      - 3001:3000
+  mariadb:
+    image: mariadb:10.3
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=g1x113611
+      - MYSQL_DATABASE=passbolt
+      - MYSQL_USER=passbolt
+      - MYSQL_PASSWORD=P4ssb0lt
     volumes:
-      - ~/data/prometheus:/var/lib/grafana
-      - ~/config/prometheus:/etc/grafana/provisioning/
-    env_file:
-      - ./grafana/config.monitoring
-    user: "104"
+      - ~/config/mariadb:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+
+  passbolt:
+    image: passbolt/passbolt:latest-ce-non-root
+    container_name: passbolt
+    tty: true
+    depends_on:
+      - mariadb
+    environment:
+      # URL
+      - APP_FULL_BASE_URL=https://passbolt.dinaren.ml
+
+      # Database settings
+      - DATASOURCES_DEFAULT_HOST=mariadb
+      - DATASOURCES_DEFAULT_USERNAME=passbolt
+      - DATASOURCES_DEFAULT_PASSWORD=P4ssb0lt
+      - DATASOURCES_DEFAULT_DATABASE=passbolt
+      - DATASOURCES_DEFAULT_PORT=3306
+      - DATASOURCES_QUOTE_IDENTIFIER=true
+
+      # Registration
+      - PASSBOLT_REGISTRATION_PUBLIC=false
+    volumes:
+      - ~/config/passbolt/gpg_volume:/etc/passbolt/gpg
+      - ~/config/passbolt/images_volume:/usr/share/php/passbolt/webroot/img/public
+    command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
+    ports:
+      - 8282:8080
+      - 8243:4433

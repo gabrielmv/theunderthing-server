@@ -1,0 +1,59 @@
+server {
+    listen      80;
+
+    server_name calibre.dinaren.ml;
+    return 301 https://calibre.dinaren.ml:443$request_uri;
+}
+
+server {
+    listen        443 ssl;
+    server_name   calibre.dinaren.ml;
+
+    ssl_certificate /certs/config/live/dinaren.ml/cert.pem;
+    ssl_certificate_key /certs/config/live/dinaren.ml/privkey.pem;
+
+    location / {
+        proxy_pass              http://10.0.0.101:8083;
+
+        proxy_bind              $server_addr;
+        proxy_set_header        X-Real-IP  $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_set_header        Host            $http_host;
+        proxy_set_header        X-Scheme        $scheme;
+        proxy_set_header        X-Script-Name   /calibre;  # IMPORTANT: path has NO trailing slash
+    }
+}
+
+server {
+    listen      80;
+
+    server_name calibre.dinaren.tk;
+    return 301 https://calibre.dinaren.tk:443$request_uri;
+}
+
+server {
+    listen        443 ssl;
+    server_name   calibre.dinaren.tk;
+
+    ssl_certificate /certs/config/live/dinaren.tk/cert.pem;
+    ssl_certificate_key /certs/config/live/dinaren.tk/privkey.pem;
+
+    location / {
+        proxy_pass              http://10.0.0.101:8083;
+
+        proxy_bind              $server_addr;
+        proxy_set_header        X-Real-IP  $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+        proxy_buffering off;
+        proxy_set_header        Host            $http_host;
+        proxy_set_header        X-Scheme        $scheme;
+        proxy_set_header        X-Script-Name   /calibre;  # IMPORTANT: path has NO trailing slash
+    }
+}

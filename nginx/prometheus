@@ -1,0 +1,50 @@
+server {
+    listen      80;
+
+    server_name prometheus.dinaren.ml;
+    return 301 https://prometheus.dinaren.ml:443$request_uri;
+}
+
+server {
+    listen        443 ssl;
+    server_name   prometheus.dinaren.ml;
+
+    ssl_certificate /certs/config/live/dinaren.ml/cert.pem;
+    ssl_certificate_key /certs/config/live/dinaren.ml/privkey.pem;
+
+    location / {
+        proxy_pass http://10.0.0.6:9090;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+    }
+}
+
+server {
+    listen      80;
+
+    server_name prometheus.dinaren.tk;
+    return 301 https://prometheus.dinaren.tk:443$request_uri;
+}
+
+server {
+    listen        443 ssl;
+    server_name   prometheus.dinaren.tk;
+
+    ssl_certificate /certs/config/live/dinaren.tk/cert.pem;
+    ssl_certificate_key /certs/config/live/dinaren.tk/privkey.pem;
+
+    location / {
+        proxy_pass http://10.0.0.104:9090;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+    }
+}
+

@@ -118,7 +118,6 @@ services:
     restart: unless-stopped
     dns:
       - 1.1.1.1
-# :14.2.4.99202004222217-7004-50f676cubuntu18.04.1-ls75
   qbittorrent-0:
     image: linuxserver/qbittorrent
     container_name: qbittorrent-0
@@ -178,26 +177,6 @@ services:
       # - 5001:5000
     network_mode: service:surfshark-1
     restart: unless-stopped
-
-  # axigen:
-  #   container_name: axigen
-  #   image: axigen/axigen
-  #   ports:
-  #     # - "21:21"
-  #     # - "25:25"
-  #     # - "80:80"
-  #     # - "110:110"
-  #     # - "143:143"
-  #     - "443:443"
-  #     - "465:465"
-  #     - "993:993"
-  #     - "995:995"        
-  #     # - "9000:9000"
-  #     - "9443:9443"
-  #     # - "7000:7000"
-  #   volumes:
-  #     - './config/axigen/:/var/opt/axigen/'
-  #   restart: unless-stopped
 
   node-exporter:
     privileged: true

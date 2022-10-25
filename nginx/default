@@ -1,0 +1,26 @@
+server {
+
+        listen 443 ssl default_server;
+
+        root /theunderthing-homepage;
+        # root /config/www;
+        index index.html index.htm index.php;
+
+        server_name dinaren.ml;
+
+
+        ssl_certificate /certs/config/live/dinaren.ml/cert.pem;
+        ssl_certificate_key /certs/config/live/dinaren.ml/privkey.pem;
+
+        client_max_body_size 0;
+
+        location / {
+                try_files $uri $uri/ /index.html /index.php?$args =404;
+        }
+
+
+        location @rewrites {
+        # If nothing matches we'll just send it to /index.html
+        rewrite ^ /index.html last;
+    }
+}

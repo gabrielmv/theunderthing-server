@@ -139,46 +139,6 @@ services:
     network_mode: service:surfshark-0
     restart: unless-stopped
 
-  surfshark-1:
-    image: ilteoood/docker-surfshark
-    container_name: surfshark-1
-    environment: 
-      - SURFSHARK_USER=
-      - SURFSHARK_PASSWORD=
-      - SURFSHARK_COUNTRY=nl
-      - SURFSHARK_CITY=ams
-      - CONNECTION_TYPE=udp
-      - LAN_NETWORK=10.0.0.0/24
-    cap_add: 
-      - NET_ADMIN
-    devices:
-       - /dev/net/tun
-    ports:
-      - 5001:5001
-    restart: unless-stopped
-    dns:
-      - 1.1.1.1
-
-  qbittorrent-1:
-    image: linuxserver/qbittorrent
-    container_name: qbittorrent-1
-    depends_on: 
-      - surfshark-1
-    extends:
-      file: base.yml
-      service: base
-    environment:
-      - WEBUI_PORT=5001
-    volumes:
-      - ~/config/qbittorrent-1:/config
-      - /storage/downloads:/downloads
-    # ports:
-      # - 6881:6881
-      # - 6881:6881/udp
-      # - 5001:5000
-    network_mode: service:surfshark-1
-    restart: unless-stopped
-
   # axigen:
   #   container_name: axigen
   #   image: axigen/axigen
